@@ -53,7 +53,11 @@
     }).addClass("img materialboxed");
 
     imgEl.on("error", function (e) {
-      $(this).remove();
+      $(this).attr("src", "img/not-availible.jpg")
+      .removeClass("materialboxed")
+      .click(function(e) {
+        $(this).parent().remove();
+      })
     });
 
     $("#images").append(imgEl);
