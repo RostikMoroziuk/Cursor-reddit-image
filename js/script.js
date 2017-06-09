@@ -1,6 +1,15 @@
 (function () {
   function init() {
     $(".btn[type=submit]").click(search);
+    $("#search-field").keypress(keyIdentify);
+    $("#limit").keypress(keyIdentify);
+  }
+
+  function keyIdentify(e) {
+    if(e.keyCode == 13) { //enter
+      search();
+    }
+
   }
 
   function search() {
