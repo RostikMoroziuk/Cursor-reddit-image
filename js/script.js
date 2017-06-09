@@ -1,13 +1,14 @@
 (function () {
   function init() {
-    console.log("init");
     $(".btn[type=submit]").click(search);
   }
 
   function search() {
+    loadedImageCount = 0;
     var query = $("#search-field").val();
     var limit = $("#limit").val();
 
+    $("#images").empty();
     if (!query && !limit) {
       getImages();
     } else {
@@ -35,27 +36,21 @@
     xhr.send();
   }
 
-  try {
-    function appendImage(url) {
-      var imgEl = document.createElement('img');
+  function appendImage(url) {
+    var imgEl = $("<img>");
 
-      imgEl.src = url;
+    imgEl.attr({
+      "src": url
+    }).addClass("img materialboxed");
 
-      imgEl.onerror = function (e) {
-        $(imgEl).remove();
-        throw e
-      }
+    imgEl.on("error", function (e) {
+      $(this).remove();
+    });
 
-      document.getElementById('images').appendChild(imgEl);
-    }
-  }
-  catch(e) {
-    console.log(e);
+    $("#images").append(imgEl);
   }
 
   function getImages(obj) {
-    $("#images").empty();
-
     obj = obj || {};
     obj.limit = obj.limit || 100;
     obj.category = obj.category || 'cats';
@@ -63,21 +58,21 @@
     var url = 'https://www.reddit.com/r/pics/search.json?q=';
     url += obj.category + ".png";
     url += '/&limit=' + obj.limit;
-
-    get(url, function (status, headers, body) {
-      console.log("get");
-      var a = 0;
-      var response = JSON.parse(body);
-      _.each(response.data.children, function (child) {
-        var url = child.data.url;
-        a++;
-
-        if (url.match(/\.png$/)) {
-          appendImage(url);
-        }
-      });
-    });
+    get(url, getResponse);
   }
 
+  function getResponse(status, headers, body) {
+    var a = 0;
+    var response = JSON.parse(body);
+    _.each(response.data.children, function (child) {
+      var url = child.data.url;
+      a++;
+
+      if (url.match(/\.png$/)) {
+        appendImage(url);
+        $('.materialboxed').materialbox();
+      }
+    });
+  }
   init();
 })();
