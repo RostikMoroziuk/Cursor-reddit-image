@@ -7,7 +7,7 @@
 
   function keyIdentify(e) {
     if(e.keyCode == 13) { //enter
-      search();
+      $(".btn[type=submit]").trigger("click");
     }
 
   }
